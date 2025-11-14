@@ -17,7 +17,7 @@ on:
 
 jobs:
   lint-markdown:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, arc, the1studio, org]
     
     steps:
     - name: Checkout repository
@@ -53,7 +53,7 @@ jobs:
         echo "Markdown linting completed (warnings only)"
 
   check-links:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, arc, the1studio, org]
     
     steps:
     - name: Checkout repository
@@ -97,7 +97,7 @@ jobs:
         echo "Link checking completed (warnings only)"
 
   generate-agent-index:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, arc, the1studio, org]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
@@ -283,7 +283,7 @@ jobs:
         fi
 
   spell-check:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, arc, the1studio, org]
     
     steps:
     - name: Checkout repository
