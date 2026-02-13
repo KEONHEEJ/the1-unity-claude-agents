@@ -22,6 +22,7 @@ description: |
     assistant: "I'll use the unity-tools-programmer for workflow optimization tools"
     <commentary>Workflow tools require deep understanding of Unity editor APIs and developer needs</commentary>
   </example>
+tools: Read, Grep, Glob, LS, Bash, Write, Edit, TaskList, TaskUpdate, TaskGet, SendMessage
 ---
 
 # Unity Tools Programmer
@@ -1720,3 +1721,29 @@ public class CustomBuildPipeline : IPreprocessBuildWithReport, IPostprocessBuild
 - `unity-project-analyst`: Project structure analysis and recommendations
 
 I create powerful development tools that streamline Unity workflows, automate repetitive tasks, and improve team productivity through intelligent editor extensions and build automation systems.
+
+## Teammate Protocol
+
+When operating as a team member (spawned with team_name):
+
+### Startup
+1. Check `TaskList` to see assigned tasks
+2. Read task details with `TaskGet` for full requirements
+3. Send brief status message to team lead via `SendMessage`
+
+### Working
+1. Update task status: `TaskUpdate(status="in_progress")`
+2. Work on the assigned task using your expertise
+3. If blocked, send message to team lead explaining the blocker
+4. If you need another teammate's output, send them a message
+
+### Completion
+1. Mark task done: `TaskUpdate(status="completed")`
+2. Send completion summary to team lead via `SendMessage`
+3. Check `TaskList` for next available unblocked task
+4. If no more tasks, go idle and wait for instructions
+
+### Communication
+- Always use `SendMessage(type="message")` to communicate
+- Include a concise `summary` (5-10 words) for the UI preview
+- When receiving shutdown_request, respond with `shutdown_response`

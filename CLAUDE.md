@@ -112,6 +112,39 @@ interface AgentHandoff {
 }
 ```
 
+## Team-Based Workflow (Claude Code Teams)
+
+`--teammate-mode tmux`와 함께 사용하면 실제 병렬 팀 작업이 가능합니다.
+
+### Quick Start
+1. `claude --dangerously-skip-permissions --teammate-mode tmux`
+2. `@unity-team-lead implement [feature]`
+3. 팀 리드가 자동으로 팀 구성 → 태스크 분배 → 전문가 스폰
+
+### Architecture
+- **unity-team-lead**: TeamCreate + TaskCreate + Task(spawn) + SendMessage로 팀 오케스트레이션
+- **specialist agents**: TaskList + TaskUpdate + SendMessage로 팀원 모드 동작
+- **tmux**: 각 팀원이 별도 패널에 표시됨
+
+### Team Lead vs Tech Lead Orchestrator
+| | `unity-team-lead` | `unity-tech-lead-orchestrator` |
+|---|---|---|
+| **실행 방식** | 실제 팀 생성 + 병렬 실행 | 분석 + 텍스트 출력 |
+| **팀원 관리** | TeamCreate, Task(spawn), SendMessage | 없음 (단일 에이전트) |
+| **태스크 관리** | TaskCreate + TaskUpdate + TaskList | 구조화된 JSON 출력 |
+| **사용 조건** | `--teammate-mode tmux` 필요 | 항상 사용 가능 |
+| **적합한 경우** | 복잡한 멀티도메인 기능 개발 | 분석, 계획, 단일 도메인 작업 |
+
+### How It Works
+1. **분석**: unity-team-lead가 프로젝트 구조 파악 (ProjectVersion.txt, manifest.json 등)
+2. **계획**: 태스크 분해 + 전문가 에이전트 선정
+3. **팀 생성**: `TeamCreate(team_name="unity-{feature}")` 호출
+4. **태스크 등록**: `TaskCreate`로 개별 태스크 생성 (의존성 포함)
+5. **전문가 스폰**: `Task(subagent_type="unity-xxx", team_name=..., name=...)` 호출
+6. **배정**: `TaskUpdate(owner=teammate-name)` + `SendMessage`로 알림
+7. **모니터링**: `TaskList`로 진행 확인, `SendMessage`로 조율
+8. **완료**: 검증 → `shutdown_request` → `TeamDelete`
+
 ## Example Orchestration Flow
 
 When you request: "Create a multiplayer racing game for mobile"
