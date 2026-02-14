@@ -200,3 +200,79 @@ All agents are aware of:
 4. Follow the three-phase workflow for complex tasks
 
 The Unity Game Dev AI Team is designed to accelerate your game development while maintaining high quality standards and optimal performance across all target platforms.
+
+---
+
+## OMC (oh-my-claudecode) Integration Protocol
+
+This project integrates with OMC's orchestration framework. Unity agents are the **primary** workforce; OMC agents serve as **supplementary** support for non-Unity tasks.
+
+### Agent Routing Priority
+
+**CRITICAL RULE: Unity agents ALWAYS take priority for Unity domain work.**
+
+| Task Type | Route To | DO NOT Use |
+|-----------|----------|-----------|
+| C# gameplay code | `unity-gameplay-programmer` | `oh-my-claudecode:executor` |
+| Shader / HLSL code | `unity-shader-programmer` | `oh-my-claudecode:executor` |
+| Unity performance | `unity-performance-optimizer` | `oh-my-claudecode:performance-reviewer` |
+| Unity code review | `unity-code-reviewer` | `oh-my-claudecode:code-reviewer` |
+| Unity UI (UXML/Canvas) | `unity-ui-developer` | `oh-my-claudecode:designer` |
+| Unity documentation | `documentation-specialist` | `oh-my-claudecode:writer` |
+| Unity API research | `unity-researcher` | (complement with `oh-my-claudecode:researcher`) |
+| Verification | `unity-verifier` | (OMC verifier as supplement) |
+| Git operations | `oh-my-claudecode:git-master` | (no Unity alternative) |
+| Non-Unity file editing | `oh-my-claudecode:executor` | Unity specialists |
+| General non-Unity research | `oh-my-claudecode:researcher` | Unity specialists |
+
+**Ambiguous cases → Unity agent wins.**
+
+### Unity File Extension Write Rules
+
+Unity specialist agents are authorized to directly modify these file types:
+- `.cs`, `.shader`, `.hlsl`, `.cginc`, `.compute` — Code files
+- `.asmdef`, `.asmref` — Assembly definitions
+- `.asset`, `.prefab`, `.mat`, `.controller` — Unity assets
+- `.uxml`, `.uss` — UI Toolkit files
+- `.unity` — Scene files
+- `.meta` — Unity metadata
+
+### OMC Execution Mode → Unity Workflow Mapping
+
+| OMC Mode | Unity Workflow | Behavior |
+|----------|---------------|----------|
+| **autopilot** | `unity-team-lead` (tmux) / `unity-tech-lead-orchestrator` | Autonomous Unity development with auto-verification |
+| **ralph** | `unity-team-lead` + persistence enforcement | All tasks + verification must pass before stopping |
+| **ultrawork** | Parallel Unity specialists via TeamCreate | Maximum concurrent specialist execution |
+| **ecomode** | Minimal team with haiku model routing | Token-efficient Unity development |
+| **plan** | `unity-project-analyst` + `unity-team-configurator` | Unity-aware planning interview |
+
+### Execution Flow
+
+```
+[OMC Mode Activated] → [unity-omc-bridge detects Unity project]
+    ├── tmux available → unity-team-lead (real parallel team)
+    └── single mode   → unity-tech-lead-orchestrator (sequential)
+        │
+        ├── Unity domain tasks → Unity specialist agents
+        ├── Non-Unity tasks → OMC agents
+        └── Verification → unity-verifier (always)
+```
+
+### Verification Protocol
+
+Every feature must pass `unity-verifier` before completion. Verification tiers:
+
+| Tier | When | Checks |
+|------|------|--------|
+| LIGHT | < 5 files, < 100 lines | Syntax, existence, namespace |
+| STANDARD | Default for features | + Lifecycle, events, performance patterns |
+| THOROUGH | Architecture, multiplayer, platform-critical | + Threading, network, platform paths |
+
+### Supplementary Agents (New in OMC Integration)
+
+| Agent | Location | Role |
+|-------|----------|------|
+| `unity-omc-bridge` | `agents/orchestrators/` | OMC mode → Unity workflow routing |
+| `unity-researcher` | `agents/core/` | Unity API documentation lookup |
+| `unity-verifier` | `agents/core/` | Tiered quality verification gate |

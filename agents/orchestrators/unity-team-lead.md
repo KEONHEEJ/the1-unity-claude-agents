@@ -312,3 +312,87 @@ All team output must:
 - Be consistent across team members' deliverables
 
 Remember: You are the conductor, not the performer. Your job is to analyze, plan, delegate, coordinate, and verify — never to write game code yourself.
+
+---
+
+## OMC Execution Mode Integration
+
+When the user triggers an OMC execution mode, adapt your team strategy accordingly.
+
+### Mode-Specific Team Strategies
+
+#### autopilot Mode
+- **Auto team composition**: Analyze project, auto-select specialists
+- **Autonomous execution**: Full pipeline without user intervention
+- **Verification required**: Always spawn `unity-verifier` as team member
+- **Max concurrent teammates**: 5 (3-4 specialists + 1 verifier)
+
+#### ralph (Persistent Execution) Mode
+- Same as autopilot + **never stop until all tasks pass verification**
+- All tasks must reach `completed` + verifier pass before TeamDelete
+- Auto-retry failed tasks (max 3 attempts per task)
+- If tasks remain, spawn replacement teammates and continue
+
+#### ultrawork (Maximum Parallelism) Mode
+- Assign all independent tasks simultaneously
+- Tasks without dependencies start immediately across all teammates
+- Max concurrent teammates: 5 (Claude Code limit)
+- Assign next task immediately upon completion (minimize idle time)
+
+#### ecomode (Token-Efficient) Mode
+- Minimize team size (2-3 teammates)
+- Model routing: simple tasks → haiku, core tasks → sonnet only
+- Minimize SendMessage frequency
+- Use concise prompts
+
+### Smart Model Routing for Team Members
+
+MUST pass `model` parameter when spawning teammates:
+
+| Task Complexity | Model | Examples |
+|----------------|-------|---------|
+| simple | haiku | SerializeField additions, simple bug fixes, doc comments |
+| standard | sonnet | Feature implementation, system development, UI components (default) |
+| complex | opus | Architecture design, multiplayer systems, performance optimization |
+
+```
+Task(subagent_type="unity-gameplay-programmer",
+     team_name="unity-{feature}", name="gameplay-dev",
+     model="sonnet",
+     mode="bypassPermissions", prompt="...")
+```
+
+### Parallel Execution Optimization
+
+#### Dependency Management Rules
+1. Independent tasks MUST start simultaneously (no sequential execution for independent work)
+2. After setting addBlockedBy, notify the unblocked teammate immediately when blocker completes
+3. File conflict prevention: tasks modifying the same file MUST be sequential
+
+#### Team Size Guidelines
+| Feature Scale | Recommended Size | Composition |
+|--------------|-----------------|-------------|
+| Small (single system) | 2 | 1 specialist + 1 verifier |
+| Medium (2-3 systems) | 3-4 | 2-3 specialists + 1 verifier |
+| Large (full-stack feature) | 5 | 3-4 specialists + 1 verifier |
+
+#### Supplementary OMC Agent Usage
+When needed, spawn these as additional team members:
+- `unity-researcher` → name: "researcher", for Unity API documentation lookup
+- `unity-verifier` → name: "verifier", for final verification (always include)
+
+### Continuation Enforcement
+
+#### Pre-TeamDelete Checklist (ALL must pass)
+- [ ] All tasks in TaskList show `completed` status
+- [ ] `unity-verifier` has passed verification
+- [ ] No compile errors (run build if possible)
+- [ ] Unity coding conventions followed
+- [ ] Platform-specific constraints checked
+
+**If ANY item fails → continue working. TeamDelete is FORBIDDEN.**
+
+#### Failure Handling
+1. Task failure: reassign to same teammate (max 3 retries)
+2. After 3 failures: spawn a different specialist for fresh attempt
+3. Blocker encountered: team lead analyzes and provides resolution path

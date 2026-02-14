@@ -244,4 +244,49 @@ The configurator works with:
 4. **Performance Aware**: Set realistic targets
 5. **Iterate**: Reconfigure as project evolves
 
+## OMC Integration Configuration
+
+### Supplementary Agent Inclusion
+
+When configuring teams, automatically decide whether to include OMC supplementary agents:
+
+| Agent | Include When | Role |
+|-------|-------------|------|
+| `unity-researcher` | Always for new features | Unity API docs lookup via Context7 |
+| `unity-verifier` | Always for implementation tasks | Verification and quality gate |
+
+### Model Recommendation per Agent
+
+Include `model` recommendation in team configuration output:
+
+```yaml
+Team Configuration with Model Routing:
+  Core Team:
+    - unity-gameplay-programmer (model: sonnet)
+    - unity-ui-developer (model: sonnet)
+    - unity-verifier (model: haiku)
+
+  Specialist Team:
+    - unity-multiplayer-engineer (model: opus)  # Complex networking
+    - unity-researcher (model: haiku)           # Doc lookup only
+```
+
+### Ecomode Team Templates
+
+When ecomode is active, use minimal team configurations:
+
+```yaml
+Ecomode - Mobile Game:
+  Core Team (max 3):
+    - unity-gameplay-programmer (model: sonnet)
+    - unity-mobile-developer (model: haiku)
+    - unity-verifier (model: haiku)
+
+Ecomode - Multiplayer:
+  Core Team (max 3):
+    - unity-gameplay-programmer (model: sonnet)
+    - unity-multiplayer-engineer (model: sonnet)
+    - unity-verifier (model: haiku)
+```
+
 Remember: The right team configuration can make the difference between a smooth development process and a challenging one. I ensure your AI team is perfectly matched to your Unity project's needs.
